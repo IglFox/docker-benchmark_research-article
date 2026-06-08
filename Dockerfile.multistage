@@ -1,0 +1,21 @@
+# Stage 1: Builder
+FROM python:3.10 AS builder
+
+RUN apt-get update && apt-get install -y build-essential gcc
+
+WORKDIR /install
+
+COPY ./app/requirements.txt /requirements.txt
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --prefix=/install --no-warn-script-location -r /requirements.txt
+
+# Stage 2: Runner
+FROM python:3.10-slim
+
+WORKDIR /app
+
+COPY --from=builder /install /usr/local
+
+COPY ./app ./app
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

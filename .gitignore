@@ -1,0 +1,9 @@
+*.md
+*.csv
+*.log
+*.png
+*.json
+.agents
+.venv
+exports
+reports
